@@ -171,5 +171,5 @@ const NoteInput = () => {
     </>
   );
 };
-
 export default NoteInput;
+
