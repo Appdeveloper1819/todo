@@ -23,4 +23,3 @@ export const removeLabel = (label) => ({
     type: removeLabel,
     payload: label,
 })
-

@@ -11,7 +11,6 @@ const NoteInput = () => {
   const [showdrop, setShowdrop] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
-  // const [isclicked, setIsClicked] = useState(false);
 
   const dropdownRef = useRef(null);
   const noteRef = useRef(null);
@@ -35,8 +34,6 @@ const NoteInput = () => {
 
   const toggledropdown = () => setShowDropDown(!showdropdown);
   const toggledrop = () => setShowdrop(!showdrop);
-  // const togglesave = () => setIsClicked(!isclicked);
-  // console.log(togglesave);
 
   const handleclickoutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -195,6 +192,7 @@ const NoteInput = () => {
 
                   <i className="material-symbols-rounded cursor-pointer opacity-50">undo</i>
                   <i className="material-symbols-rounded cursor-pointer opacity-50">redo</i>
+                  
                   <button
                   onClick={handleNoteSubmit}
                   className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
