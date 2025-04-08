@@ -1,15 +1,27 @@
 import React, { useRef, useState, useEffect } from "react";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
+import { useDispatch, useSelector } from "react-redux";
+import { addNote } from "../redux/actions/notesActions"; 
 
 const NoteInput = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [image, setImage] = useState(null);
   const [showdropdown, setShowDropDown] = useState(false);
   const [showdrop, setShowdrop] = useState(false);
+  const [noteText, setNoteText] = useState("");
+  const [noteTitle, setNoteTitle] = useState("");
+  // const [isclicked, setIsClicked] = useState(false);
+
   const dropdownRef = useRef(null);
   const noteRef = useRef(null);
-  
+
+  const dispatch = useDispatch();
+  const notes = useSelector((state) => state.notes?.notes ?? []);
+  console.log("Current notes:", notes);
+
+
+
   // Image upload handler
   const ImageUpload = (event) => {
     const file = event.target.files[0];
@@ -21,26 +33,45 @@ const NoteInput = () => {
     reader.readAsDataURL(file);
   };
 
-  // Dropdown toggle handlers
   const toggledropdown = () => setShowDropDown(!showdropdown);
   const toggledrop = () => setShowdrop(!showdrop);
+  // const togglesave = () => setIsClicked(!isclicked);
+  // console.log(togglesave);
 
-  // Close dropdown when clicking outside
   const handleclickoutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setShowDropDown(false);
       setShowdrop(false);
     }
-    if (noteRef.current && !noteRef.current.contains(e.target)){
+    if (noteRef.current && !noteRef.current.contains(e.target)) {
       setIsExpanded(false);
     }
   };
-  
 
   useEffect(() => {
     document.addEventListener("mousedown", handleclickoutside);
     return () => document.removeEventListener("mousedown", handleclickoutside);
   }, []);
+
+  const handleNoteSubmit = () => {
+    if (!noteText.trim() && !noteTitle.trim() && !image) return;
+
+    const newNote = {
+      title: noteTitle,
+      content: noteText,
+      id: Date.now(),
+      image,
+      timestamp: new Date().toISOString(),
+    };
+
+    dispatch(addNote([newNote]));
+
+    // Reset input
+    setNoteText("");
+    setNoteTitle("");
+    setImage(null);
+    setIsExpanded(false);
+  };
 
   return (
     <>
@@ -54,6 +85,8 @@ const NoteInput = () => {
           {isExpanded && (
             <input
               type="text"
+              value={noteTitle}
+              onChange={(e) => setNoteTitle(e.target.value)} 
               placeholder="Title"
               className="w-full bg-transparent text-lg font-semibold outline-none mb-2 
                          text-gray-800 dark:text-white"
@@ -62,6 +95,9 @@ const NoteInput = () => {
           <div onClick={() => setIsExpanded(true)} className="relative flex flex-col">
             <textarea
               type="text"
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value
+              )}
               placeholder="Take a note..."
               className="w-full bg-transparent outline-none text-gray-800 dark:text-white"
             />
@@ -159,6 +195,11 @@ const NoteInput = () => {
 
                   <i className="material-symbols-rounded cursor-pointer opacity-50">undo</i>
                   <i className="material-symbols-rounded cursor-pointer opacity-50">redo</i>
+                  <button
+                  onClick={handleNoteSubmit}
+                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+                  Save
+                </button>
                 </div>
                 <button onClick={() => setIsExpanded(false)} className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0">
                   Close
