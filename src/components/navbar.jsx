@@ -68,7 +68,7 @@ const Navbar = () => {
 
   return (
     <>
-      <nav className="bg-gray-300 dark:bg-gray-900 shadow flex flex-row px-12 py-2 items-center justify-between">
+      <nav className="bg-gray-300 dark:bg-gray-900 shadow flex flex-row px-12 py-2 items-center justify-between sticky top-0 z-10">
         <div className="flex items-center space-x-2">
           <i className="material-symbols-rounded text-xl sm:text-2xl cursor-pointer dark:text-white">task</i>
           <span className="text-xl sm:text-2xl cursor-pointer dark:text-white">Short Notes</span>

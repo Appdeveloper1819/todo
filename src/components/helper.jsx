@@ -3,6 +3,7 @@ import Navbar from "./navbar";
 import Sidebar from "./sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../redux/actions/notesActions"; 
+import Notelist from "./Notelist";
 
 const NoteInput = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -57,23 +58,24 @@ const NoteInput = () => {
       title: noteTitle,
       content: noteText,
       id: Date.now(),
-      image,
+      image: image,
       timestamp: new Date().toISOString(),
     };
-
-    dispatch(addNote([newNote]));
+    console.log("Dispatching note:", newNote);
+    dispatch(addNote(newNote));
 
     // Reset input
     setNoteText("");
     setNoteTitle("");
     setImage(null);
     setIsExpanded(false);
-  };
+  };  
 
   return (
     <>
       <Navbar />
       <Sidebar />
+      
       <div className="flex flex-col items-center mt-5 px-4 sm:px-0">
         <div
           className="w-full max-w-sm sm:max-w-md bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white 
@@ -85,9 +87,7 @@ const NoteInput = () => {
               value={noteTitle}
               onChange={(e) => setNoteTitle(e.target.value)} 
               placeholder="Title"
-              className="w-full bg-transparent text-lg font-semibold outline-none mb-2 
-                         text-gray-800 dark:text-white"
-            />
+              className="w-full bg-transparent text-lg font-semibold outline-none mb-2 text-gray-800 dark:text-white" />
           )}
           <div onClick={() => setIsExpanded(true)} className="relative flex flex-col">
             <textarea
@@ -206,6 +206,7 @@ const NoteInput = () => {
             </>
           )}
         </div>
+        <Notelist />
       </div>
     </>
   );

@@ -1,13 +1,6 @@
-import { createStore, combineReducers } from "redux";
-import notesReducer from "./reducers";
+import { createStore } from 'redux';
+import rootReducer from './reducers';
 
-const rootReducer = combineReducers({
-  notes: notesReducer,
-});
-
-const store = createStore(
-  rootReducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()
-);
+const store = createStore(rootReducer);
 
 export default store;
