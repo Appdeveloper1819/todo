@@ -8,7 +8,6 @@ const Notelist = () => {
 
 
   const [isExpanded, setIsExpanded] = useState(false);
-
   return (
     <>
     <div className="p-4">
