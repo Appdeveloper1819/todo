@@ -20,7 +20,7 @@ const Sidebar = ({ showSearch }) => {
     if (editRef.current && !editRef.current.contains(e.target)) {
       setShowEditPopup(false);
     }
-    if (sidebarRef.current && !sidebarRef.current.contains(e.target)){
+    if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setIsSidebarOpen(false);
     }
   };
@@ -34,15 +34,18 @@ const Sidebar = ({ showSearch }) => {
     <>
       {!showSearch && (
         <button
-          className="sm:hidden fixed top-7 left-2 bg-gray-300 dark:bg-gray-700 rounded-full shadow-lg z-100"
+          className="sm:hidden fixed top-4 left-2 bg-gray-300 dark:bg-gray-700 rounded-full shadow-lg z-[100]"
           onClick={toggleSidebar}>
-          <i className="material-symbols-rounded text-gray-600 dark:text-gray-300" ref={sidebarRef}>menu</i>
+          <i className="material-symbols-rounded text-gray-600 dark:text-gray-300">menu</i>
         </button>
       )}
+
       <div
-        className={`fixed top-0 left-0 h-full bg-gray-300 dark:bg-gray-800 text-gray-600 dark:text-gray-300 flex flex-col py-4 px-2 transition-all duration-300 z-40
-          ${isSidebarOpen ? "w-48" : "w-12"} 
-          ${isSidebarOpen ? "sm:w-48" : "sm:flex sm:w-12 hidden"}`}>
+        ref={sidebarRef}
+        className={`fixed top-0 left-0 h-full bg-gray-300 dark:bg-gray-800 text-gray-600 dark:text-gray-300 flex flex-col py-4 px-2 transition-all duration-300 z-50
+        ${isSidebarOpen ? "w-48" : "w-12"}
+        ${isSidebarOpen ? "sm:w-48" : "sm:flex sm:w-12 hidden "}`}>
+
         <div className="flex items-center justify-between w-full">
           <button
             className="text-gray-600 dark:text-gray-300 hover:text-orange-500"
@@ -56,22 +59,17 @@ const Sidebar = ({ showSearch }) => {
             </div>
           )}
         </div>
+
         <div className="mt-5 space-y-4">
-          <Link
-            to="/"
-            className="flex items-center space-x-2 hover:text-orange-500">
+          <Link to="/" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">home</i>
             {isSidebarOpen && <span>Home</span>}
           </Link>
-          <Link
-            to="/Notes"
-            className="flex items-center space-x-2 hover:text-orange-500">
+          <Link to="/Notes" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">lightbulb_2</i>
             {isSidebarOpen && <span>Notes</span>}
           </Link>
-          <Link
-            to="/reminders"
-            className="flex items-center space-x-2 hover:text-orange-500">
+          <Link to="/reminders" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">notifications</i>
             {isSidebarOpen && <span>Reminders</span>}
           </Link>
@@ -81,28 +79,28 @@ const Sidebar = ({ showSearch }) => {
             <i className="material-symbols-rounded">edit</i>
             {isSidebarOpen && <span>Edit Label</span>}
           </div>
-          <Link
-            to="/archive"
-            className="flex items-center space-x-2 hover:text-orange-500 cursor-pointer">
+          <Link to="/archive" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">archive</i>
             {isSidebarOpen && <span>Archive</span>}
           </Link>
-          <Link
-            to="/bin"
-            className="flex items-center space-x-2 hover:text-orange-500 cursor-pointer ">
+          <Link to="/bin" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">delete</i>
             {isSidebarOpen && <span>Bin</span>}
           </Link>
         </div>
       </div>
+
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-30 sm:hidden"
+          className="fixed inset-0 bg-black bg-opacity-30 sm:hidden z-30"
           onClick={toggleSidebar}></div>
       )}
+
       {showEditPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4 sm:px-0">
-          <div className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 max-w-xs sm:max-w-md"ref={editRef}>
+          <div
+            ref={editRef}
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 max-w-xs sm:max-w-md">
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               Edit Labels
             </h2>
@@ -114,10 +112,11 @@ const Sidebar = ({ showSearch }) => {
               </i>
               <input
                 type="search"
-                placeholder="Create new label "
+                placeholder="Create new label"
                 value={labelName}
                 onChange={(e) => setLabelName(e.target.value)}
-                className="w-full border-b border-gray-400 dark:border-gray-600 outline-none p-2 mb-4 bg-transparent text-gray-900 dark:text-white"/>
+                className="w-full border-b border-gray-400 dark:border-gray-600 outline-none p-2 mb-4 bg-transparent text-gray-900 dark:text-white"
+              />
               {labelName && (
                 <i className="material-symbols-rounded text-green-500 cursor-pointer ml-2">
                   check

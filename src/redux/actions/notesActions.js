@@ -9,17 +9,17 @@ export const addNote = (note) =>({
     payload: note,
 })
 
-export const setNotes = (notes) =>({
-    type: Set_Notes,
-    payload: notes,
-})
+// export const setNotes = (notes) =>({
+//     type: Set_Notes,
+//     payload: notes,
+// })
 
-export const addLabel = (label) => ({
-    type : Add_Label,
-    payload: label,
-})
+// export const addLabel = (label) => ({
+//     type : Add_Label,
+//     payload: label,
+// })
 
-export const removeLabel = (label) => ({
-    type: removeLabel,
-    payload: label,
-})
+// export const removeLabel = (label) => ({
+//     type: removeLabel,
+//     payload: label,
+// })
