@@ -42,6 +42,7 @@ const NoteInput = () => {
       setShowdrop(false);
     }
     if (noteRef.current && !noteRef.current.contains(e.target)) {
+      // handleNoteSubmit();
       setIsExpanded(false);
     }
   };

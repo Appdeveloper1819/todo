@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useSelector } from "react-redux";
 
 const Notelist = () => {
@@ -6,7 +6,11 @@ const Notelist = () => {
     Array.isArray(state.notes?.notes) ? state.notes.notes : []
   );
 
+
+  const [isExpanded, setIsExpanded] = useState(false);
+
   return (
+    <>
     <div className="p-4">
       {notes.length === 0 ? (
         <p className="text-gray-600 text-center">No notes yet.</p>
@@ -40,6 +44,12 @@ const Notelist = () => {
         ))
       )}
     </div>
+    { isExpanded && (
+    <div  flex flex-col >
+      <i className="material-symbols-rounded ">check_box</i>
+    </div>
+     )}
+    </>
   );
 };
 
