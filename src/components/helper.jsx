@@ -53,12 +53,12 @@ const NoteInput = () => {
   }, []);
 
   const handleNoteSubmit = () => {
-    if (!noteText.trim() && !noteTitle.trim() && !image) return;
+    // if (!noteText.trim() && !noteTitle.trim() && !image) return;
 
     const newNote = {
+      id: Date.now(),
       title: noteTitle,
       content: noteText,
-      id: Date.now(),
       image: image,
       timestamp: new Date().toISOString(),
     };
@@ -97,7 +97,7 @@ const NoteInput = () => {
               onChange={(e) => setNoteText(e.target.value
               )}
               placeholder="Take a note..."
-              className="w-full bg-transparent outline-none text-gray-800 dark:text-white"
+              className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"
             />
             {image && <img src={image} alt="Note" className="mt-2 rounded w-full" />}
             {!isExpanded && (
