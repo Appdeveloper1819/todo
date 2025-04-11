@@ -1,4 +1,4 @@
-import { Add_Note } from "../actions/notesActions";
+import { Add_Note, Delete_Notes } from "../actions/notesActions";
 // import { Set_Notes, Add_Label, Remove_Label } from "../actions/notesActions";
 
 const initialState = {
@@ -7,22 +7,17 @@ const initialState = {
 };
 
 const notesReducer = (State = initialState, action) => {
-  switch (action.type) {
-    // case Set_Notes:
-    //   return {
-    //     ...State,
-    //     notes: action.payload,
-    //   };
+  switch (action.type) {  
       case Add_Note:
         return {
           ...State,
           notes: [...State.notes, action.payload],
         };
-  //   case Add_Label:
-  //     return {
-  //       ...State,
-  //       labels: [...State.labels, action.payload],
-  //     };
+    case Delete_Notes:
+      return {
+        ...State,
+        notes: State.notes.filter((note) => note.id !== action.payload),
+      };
   //   case Remove_Label:
   //     return {
   //       ...State,
