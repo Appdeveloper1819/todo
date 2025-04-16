@@ -10,6 +10,7 @@ const Notelist = () => {
   const [expandedNoteId, setExpandedNoteId] = useState(null);
   const [showDropdownId, setShowDropdownId] = useState(null);
   const [selectnote, setSelectNote] = useState([]);
+  const [iscross, setIsCross] = useState(false);
 
 
   const handleExpand = (noteId) => {
@@ -29,6 +30,11 @@ const Notelist = () => {
     );
     console.log("Toggled selection for note:", noteId);
   };
+
+  const handleCross = () => {
+    setIsCross(!iscross);
+    setSelectNote([]);
+  }
   
 
   const dispatch = useDispatch();
@@ -49,10 +55,12 @@ const handleDeleteNote = (noteId) => {
   
 
   return (
-    <>
     <div className="p-4">
       {selectnote.length > 0 && (
         <div className="flex justify-between items-center bg-white dark:bg-gray-800 shadow px-4 py-2 mb-4 rounded-md max-w-md mx-auto">
+          <i className="material-symbols-rounded text-gray-500 cursor-pointer" onClick={handleCross} >
+          close
+        </i>
           <span className="text-sm text-gray-700 dark:text-white">
             {selectnote.length} selected
           </span>
@@ -148,7 +156,6 @@ const handleDeleteNote = (noteId) => {
         ))
       )}
     </div>
-    </>
   );
 };
 

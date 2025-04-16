@@ -3,6 +3,7 @@
 export const Add_Note =  "Add_Notes";
 export const Delete_Notes = "Delete_Notes";
 export const Clear_Selection = "Clear_Selection";
+export const Restore_Notes = "Restore_Notes";
 
 
 export const addNote = (note) =>({
@@ -14,6 +15,12 @@ export const deleteNotes = (id) =>({
     type: Delete_Notes,
     payload: id,
 })
+
+export const restoreNotes = (id) => ({
+    type: Restore_Notes,
+    payload: id,
+})
+
 
 export const clearSelection = () => ({
     type: Clear_Selection,
