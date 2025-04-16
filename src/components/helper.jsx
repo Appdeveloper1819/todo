@@ -15,6 +15,7 @@ const NoteInput = () => {
 
   const dropdownRef = useRef(null);
   const noteRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const dispatch = useDispatch();
   const notes = useSelector((state) => state.notes?.notes ?? []);
@@ -29,8 +30,10 @@ const NoteInput = () => {
     const reader = new FileReader();
     reader.onload = () => {
       setImage(reader.result);
+      setIsExpanded(true);
     };
     reader.readAsDataURL(file);
+    event.target.value = ""; 
   };
 
   const toggledropdown = () => setShowDropDown(!showdropdown);
@@ -108,18 +111,9 @@ const NoteInput = () => {
                 <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
                   brush
                 </i>
-                <label htmlFor="image-upload">
-                  <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
+                  <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300" onClick={() => fileInputRef.current.click()}>
                     image
                   </i>
-                </label>
-                <input
-                  type="file"
-                  id="image-upload"
-                  accept="image/*"
-                  onChange={ImageUpload}
-                  className="hidden"
-                />
               </div>
             )}
           </div>
@@ -156,19 +150,9 @@ const NoteInput = () => {
                   <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
                     person_add
                   </i>
-
-                  <label htmlFor="image-upload">
-                    <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
+                    <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"  onClick={() => fileInputRef.current.click()}>
                       image
                     </i>
-                  </label>
-                  <input
-                    type="file"
-                    id="image-upload"
-                    accept="image/*"
-                    onChange={ImageUpload}
-                    className="hidden"
-                  />
 
                   <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
                     archive
@@ -207,6 +191,13 @@ const NoteInput = () => {
             </>
           )}
         </div>
+        <input
+          type="file"
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={ImageUpload}
+          className="hidden"
+        />
         <Notelist />
       </div>
     </>
