@@ -1,4 +1,4 @@
-import { Add_Note, Delete_Notes, Restore_Notes } from "../actions/notesActions";
+import { Add_Note, Delete_Notes, Remove_Label, Restore_Notes } from "../actions/notesActions";
 
 const initialState = {
   notes: [],
@@ -30,6 +30,17 @@ export default function notesReducer(State = initialState, action) {
                 notes: [...State.notes, restored],
                 deletedNotes: State.deletedNotes.filter(note => note.id !== action.payload),
                 };
+
+                case Remove_Label:
+                  return {
+                    ...State,
+                    notes: State.notes.map((note) => {
+                      if (note.label === action.payload) {
+                        return { ...note, label: null };
+                      }
+                      return note;
+                    }),
+                  };
     default:
       return State;
     }
