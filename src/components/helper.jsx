@@ -50,6 +50,7 @@ const NoteInput = () => {
     }
   };
 
+
   useEffect(() => {
     document.addEventListener("mousedown", handleclickoutside);
     return () => document.removeEventListener("mousedown", handleclickoutside);
