@@ -46,9 +46,9 @@ const handleDeleteNote = (noteId) => {
 
   return (
     <>
-    <header> 
+    <nav> 
       <Navlist selectnote={selectnote} setSelectNote={setSelectNote} />
-    </header>
+    </nav>
     
     <div className="p-4">
       {notes.length === 0 ? (

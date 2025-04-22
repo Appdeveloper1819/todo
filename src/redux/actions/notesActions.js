@@ -5,6 +5,7 @@ export const Delete_Notes = "Delete_Notes";
 export const Clear_Selection = "Clear_Selection";
 export const Restore_Notes = "Restore_Notes";
 export const Remove_Label = "Remove_Label";
+export const Add_Label = "Add_Label";   
 
 export const addNote = (note) =>({
     type: Add_Note,
@@ -31,10 +32,10 @@ export const removeLabel = (label) => ({
     payload: label,
 })
 
-// export const addLabel = (label) => ({
-//     type : Add_Label,
-//     payload: label,
-// })
+export const addLabel = (label) => ({
+    type : Add_Label,
+    payload: label,
+})
 
 // export const removeLabel = (label) => ({
 //     type: removeLabel,

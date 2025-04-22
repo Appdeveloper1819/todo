@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../redux/actions/notesActions"; 
 import Notelist from "./Notelist";
 
+
 const NoteInput = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [image, setImage] = useState(null);
@@ -12,6 +13,7 @@ const NoteInput = () => {
   const [showdrop, setShowdrop] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
+  
 
   const dropdownRef = useRef(null);
   const noteRef = useRef(null);
@@ -76,10 +78,12 @@ const NoteInput = () => {
     setIsExpanded(false);
   };  
 
+
   return (
     <>
       <Navbar />
       <Sidebar />
+
       
       <div className="flex flex-col items-center mt-5 px-4 sm:px-0">
         <div
