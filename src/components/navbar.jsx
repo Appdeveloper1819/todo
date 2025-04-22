@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+// import { useSelector } from "react-redux";
 
 const Navbar = () => {
   const [showSearch, setShowSearch] = useState(false);
@@ -16,6 +17,12 @@ const Navbar = () => {
       setIsProgress(false);
     }, 2000);
   };
+
+  // const handldeChange = (value) => {
+  //   this.setState({ value });
+  // }
+
+  // const notesState = useSelector(state => state.notes)
 
   const toggledropdown = () => {
     setShowDropDown(!showdropdown);
@@ -71,8 +78,10 @@ const Navbar = () => {
             <i className="material-symbols-rounded text-gray-600 dark:text-gray-300 cursor-pointer">search</i>
             <input
               type="search"
+              // value={this.state.value}
+              // onChange={this.handldeChange}
               placeholder="Search Here"
-              className="bg-transparent focus:outline-none px-2 text-gray-700 dark:text-white flex-grow w-full"
+              className="bg-transparent foc s:outline-none px-2 text-gray-700 dark:text-white flex-grow w-full"
             />
           </div>
         )}
@@ -139,6 +148,8 @@ const Navbar = () => {
           <input
             type="search"
             placeholder="Search Here"
+            // value={this.state.value}  
+            // onChange={this.handldeChange}
             className="bg-transparent focus:outline-none px-2 text-gray-700 dark:text-white flex-grow w-full"
           />
         </div>

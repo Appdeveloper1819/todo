@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteNotes } from "../redux/actions/notesActions";
 import Navlist from "./Navlist";
+import { updateImageUpload } from "../redux/actions/notesActions";
 
-const Notelist = () => {
+
+const Notelist = ({ImageUpload}) => {
   const notes = useSelector((state) =>
     Array.isArray(state.notes?.notes) ? state.notes.notes : []
   );
@@ -11,6 +13,9 @@ const Notelist = () => {
   const [expandedNoteId, setExpandedNoteId] = useState(null);
   const [showDropdownId, setShowDropdownId] = useState(null);
   const [selectnote, setSelectNote] = useState([]);
+
+  const fileInputRef = useRef(null);
+  console.log(ImageUpload);
   
 
 
@@ -44,6 +49,21 @@ const handleDeleteNote = (noteId) => {
   console.log("Deleted note with ID", noteId);
 };
 
+
+
+const handleImageUpload = (e, noteId) => {
+  const file = e.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const imageDataUrl = reader.result;
+
+    dispatch(updateImageUpload(noteId, imageDataUrl)); 
+  };
+  reader.readAsDataURL(file);
+};
+
   return (
     <>
     <nav> 
@@ -64,7 +84,7 @@ const handleDeleteNote = (noteId) => {
               <div className=" float-left text-gray-500 dark:text-gray-400">
               <i className={`material-symbols-rounded ${selectnote.includes(note.id) ? 'text-blue-400' : 'text-gray-400'}`} onClick={(e) => {
                 toggleSelect(note.id);
-                e.stopPropagation();
+                // e.stopPropagation();
               }}>check_circle</i>
               </div>
               )}
@@ -83,6 +103,11 @@ const handleDeleteNote = (noteId) => {
                 {note.content}
               </p>
             )}
+            {note.item && (
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
+                {note.item}
+              </h2>
+            )}
             {note.image && (
               <img
                 src={note.image}
@@ -98,13 +123,21 @@ const handleDeleteNote = (noteId) => {
                 <i className="material-symbols-rounded">palette</i>
                 <i className="material-symbols-rounded">notifications</i>
                 <i className="material-symbols-rounded">person_add</i>
-                <i className="material-symbols-rounded">image</i>
+                <div>
+                <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300" onClick={() => fileInputRef.current.click()}s>image</i>
+                </div>
+                <input type="file"
+                accept="image/*"
+                ref={fileInputRef}
+                onChange={(e) => handleImageUpload  (e, note.id)}
+                className="hidden"
+                 />
                 <i className="material-symbols-rounded">archive</i>
                 <div className="relative">
                   <i
                     className="material-symbols-rounded cursor-pointer"
                     onClick={(e) => {
-                      e.stopPropagation();
+                      // e.stopPropagation();
                       toggleDropdown(note.id);  
                     }}>
                     more_vert
@@ -137,3 +170,4 @@ const handleDeleteNote = (noteId) => {
 };
 
 export default Notelist;
+

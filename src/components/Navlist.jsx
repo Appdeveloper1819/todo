@@ -7,16 +7,6 @@ const [iscross, setIsCross] = useState(false);
         setIsCross(!iscross);
         setSelectNote([]);
       }
-
-
-    //   const toggleSelect = (noteId) => {
-    //     setSelectNote((prevSelected) =>
-    //       prevSelected.includes(noteId)
-    //         ? prevSelected.filter((id) => id !== noteId)
-    //         : [...prevSelected, noteId]
-    //     );
-    //     console.log("Toggled selection for note:", noteId);
-    //   };
       
     const toolbarItems = [
         {icon: "keep"},
@@ -27,6 +17,7 @@ const [iscross, setIsCross] = useState(false);
       ];
 
   return (
+    <nav>
     <div className="p-4">
       {selectnote.length > 0 && (
         <div className="flex justify-between items-center bg-white dark:bg-gray-800 shadow px-4 py-2 mb-4 rounded-md max-w-md mx-auto">
@@ -48,6 +39,7 @@ const [iscross, setIsCross] = useState(false);
         </div>
       )}
       </div>
+      </nav>
   )
 }
 
