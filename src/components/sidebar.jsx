@@ -1,12 +1,19 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { addLabel } from "../redux/actions/notesActions";
 
 const Sidebar = ({ showSearch }) => {
+
+  const dispatch = useDispatch();
+  // const [inputValue, setInputValue] = useState("");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [labelName, setLabelName] = useState("");
   const editRef = useRef(null);
   const sidebarRef = useRef(null);
+
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -29,6 +36,14 @@ const Sidebar = ({ showSearch }) => {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  const handleSaveLabel = () => {
+    if (!labelName.trim()) return; 
+    dispatch(addLabel(labelName.trim()));
+    setLabelName("");           
+    setShowEditPopup(false);   
+  };
+  
 
   return (
     <>
@@ -133,7 +148,7 @@ const Sidebar = ({ showSearch }) => {
                 className={`px-4 py-2 rounded text-white sm:w-auto ${
                   labelName ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
                 }`}
-                disabled={!labelName}>
+                disabled={!labelName} onClick={handleSaveLabel}>
                 Save
               </button>
             </div>

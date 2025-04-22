@@ -1,4 +1,10 @@
-import { Add_Note, Delete_Notes, Remove_Label, Restore_Notes } from "../actions/notesActions";
+import {
+  Add_Label,
+  Add_Note,
+  Delete_Notes,
+  Remove_Label,
+  Restore_Notes,
+} from "../actions/notesActions";
 
 const initialState = {
   notes: [],
@@ -6,43 +12,58 @@ const initialState = {
 };
 
 export default function notesReducer(State = initialState, action) {
-  switch (action.type) {  
-      case Add_Note:
-        return {
-          ...State,
-          notes: [...State.notes, action.payload],
-        };
-      
-          case  Delete_Notes:
-            const noteToDelete = State.notes.find((note) => note.id === action.payload)
-            if (!noteToDelete) return State;
-            return {
-              ...State,
-              notes: State.notes.filter(note => note.id !== action.payload),
-              deletedNotes: [...State.deletedNotes, noteToDelete],
-            };
-            
-            case Restore_Notes:
-              const restored = State.deletenotes.find((note) => note.id === action.payload)
-              if (!restored) return State;
-              return {
-                ...State,
-                notes: [...State.notes, restored],
-                deletedNotes: State.deletedNotes.filter(note => note.id !== action.payload),
-                };
+  switch (action.type) {
+    case Add_Note:
+      return {
+        ...State,
+        notes: [...State.notes, action.payload],
+      };
 
-                case Remove_Label:
-                  return {
-                    ...State,
-                    notes: State.notes.map((note) => {
-                      if (note.label === action.payload) {
-                        return { ...note, label: null };
-                      }
-                      return note;
-                    }),
-                  };
+    case Delete_Notes:
+      const noteToDelete = State.notes.find(
+        (note) => note.id === action.payload
+      );
+      if (!noteToDelete) return State;
+      return {
+        ...State,
+        notes: State.notes.filter((note) => note.id !== action.payload),
+        deletedNotes: [...State.deletedNotes, noteToDelete],
+      };
+
+    case Restore_Notes:
+      const restored = State.deletenotes.find(
+        (note) => note.id === action.payload
+      );
+      if (!restored) return State;
+      return {
+        ...State,
+        notes: [...State.notes, restored],
+        deletedNotes: State.deletedNotes.filter(
+          (note) => note.id !== action.payload
+        ),
+      };
+
+    case Remove_Label:
+      return {
+        ...State,
+        notes: State.notes.map((note) => {
+          if (note.label === action.payload) {
+            return { ...note, label: null };
+          }
+          return note;
+        }),
+      };
+    case Add_Label:
+      return {
+        ...State,
+        labels: State.notes.map((note) => {
+          if (note.id === action.payload.noteId) {
+            return { ...note, label: action.payload.label };
+          }
+          return note;
+        }),
+      };
     default:
       return State;
-    }
-};
-
+  }
+}
