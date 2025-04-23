@@ -81,7 +81,7 @@ const Navbar = () => {
               // value={this.state.value}
               // onChange={this.handldeChange}
               placeholder="Search Here"
-              className="bg-transparent foc s:outline-none px-2 text-gray-700 dark:text-white flex-grow w-full"
+              className="bg-transparent focus:outline-none px-2 text-gray-700 dark:text-white flex-grow w-full"
             />
           </div>
         )}

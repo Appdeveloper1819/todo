@@ -5,7 +5,7 @@ import Navlist from "./Navlist";
 import { updateImageUpload } from "../redux/actions/notesActions";
 
 
-const Notelist = ({ImageUpload}) => {
+const Notelist = () => {
   const notes = useSelector((state) =>
     Array.isArray(state.notes?.notes) ? state.notes.notes : []
   );
@@ -15,7 +15,7 @@ const Notelist = ({ImageUpload}) => {
   const [selectnote, setSelectNote] = useState([]);
 
   const fileInputRef = useRef(null);
-  console.log(ImageUpload);
+  // console.log(handleImageUpload);
   
 
 
@@ -58,11 +58,12 @@ const handleImageUpload = (e, noteId) => {
   const reader = new FileReader();
   reader.onloadend = () => {
     const imageDataUrl = reader.result;
-
-    dispatch(updateImageUpload(noteId, imageDataUrl)); 
+    dispatch(updateImageUpload(noteId, imageDataUrl));
   };
   reader.readAsDataURL(file);
 };
+
+
 
   return (
     <>
@@ -130,6 +131,7 @@ const handleImageUpload = (e, noteId) => {
                 accept="image/*"
                 ref={fileInputRef}
                 onChange={(e) => handleImageUpload  (e, note.id)}
+                style={{display: "none"}}
                 className="hidden"
                  />
                 <i className="material-symbols-rounded">archive</i>

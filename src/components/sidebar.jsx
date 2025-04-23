@@ -41,7 +41,7 @@ const Sidebar = ({ showSearch }) => {
     if (!labelName.trim()) return; 
     dispatch(addLabel(labelName.trim()));
     setLabelName("");           
-    setShowEditPopup(false);   
+    setShowEditPopup(false);
   };
   
 

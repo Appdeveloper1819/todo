@@ -68,8 +68,8 @@ export default function notesReducer(State = initialState, action) {
       case UPDATE_IMAGE_UPLOAD:
         return {
           ...State,
-          notes: State.notes.map((note) =>
-            note.id === action.payload.id
+          notes: State.notes.map(note =>
+            note.id === action.payload.noteId
               ? { ...note, image: action.payload.image }
               : note
           ),
