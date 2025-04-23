@@ -148,7 +148,7 @@ const NoteInput = () => {
               <i
                 className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
               >
-                {inputFocused ? "" : "add"}
+                {inputFocused ? "check_box_outline_blank" : "add"}
               </i>
               <input
                 type="text"
@@ -157,7 +157,6 @@ const NoteInput = () => {
                 onChange={(e) => setNoteItem(e.target.value)}
                 onFocus={() => setInputFocused(true)}
                 onBlur={() => {setInputFocused(false);
-                  // {inputFocused ? "check_box_outline_blank" : ""}
                   newNote();
                 }}
                 onKeyDown= {(e) => {
