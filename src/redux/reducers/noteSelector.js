@@ -1,4 +1,4 @@
-import { Clear_Selection } from "../actions/notesActions";
+import { CLEAR_SELECTION } from "../types/noteTypes";
 
 const initialState ={
     selectedNotes: [],
@@ -6,7 +6,7 @@ const initialState ={
 
 const noteSelectorReducer = (state = initialState, action) => {
     switch (action.type) {
-      case Clear_Selection:
+      case CLEAR_SELECTION:
         return {
           ...state,
           selectedNotes: [],

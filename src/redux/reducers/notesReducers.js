@@ -1,10 +1,11 @@
 import {
-  Add_Label,
-  Add_Note,
-  Delete_Notes,
-  Remove_Label,
-  Restore_Notes,
-} from "../actions/notesActions";
+  DELETE_NOTES,
+  REMOVE_LABEL,
+  RESTORE_NOTES,
+  ADD_NOTE,
+  ADD_LABEL,
+  UPDATE_IMAGE_UPLOAD,
+} from "../types/noteTypes";
 
 const initialState = {
   notes: [],
@@ -13,13 +14,13 @@ const initialState = {
 
 export default function notesReducer(State = initialState, action) {
   switch (action.type) {
-    case Add_Note:
+    case ADD_NOTE:
       return {
         ...State,
         notes: [...State.notes, action.payload],
       };
 
-    case Delete_Notes:
+    case DELETE_NOTES:
       const noteToDelete = State.notes.find(
         (note) => note.id === action.payload
       );
@@ -30,7 +31,7 @@ export default function notesReducer(State = initialState, action) {
         deletedNotes: [...State.deletedNotes, noteToDelete],
       };
 
-    case Restore_Notes:
+    case RESTORE_NOTES:
       const restored = State.deletenotes.find(
         (note) => note.id === action.payload
       );
@@ -43,7 +44,7 @@ export default function notesReducer(State = initialState, action) {
         ),
       };
 
-    case Remove_Label:
+    case REMOVE_LABEL:
       return {
         ...State,
         notes: State.notes.map((note) => {
@@ -53,7 +54,7 @@ export default function notesReducer(State = initialState, action) {
           return note;
         }),
       };
-    case Add_Label:
+    case ADD_LABEL:
       return {
         ...State,
         labels: State.notes.map((note) => {
@@ -63,6 +64,16 @@ export default function notesReducer(State = initialState, action) {
           return note;
         }),
       };
+
+      case UPDATE_IMAGE_UPLOAD:
+        return {
+          ...State,
+          notes: State.notes.map((note) =>
+            note.id === action.payload.id
+              ? { ...note, image: action.payload.image }
+              : note
+          ),
+        };
     default:
       return State;
   }

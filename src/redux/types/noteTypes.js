@@ -1,6 +1,9 @@
-// src/redux/types/noteTypes.js
 
 export const ADD_NOTE = 'ADD_NOTE';
 export const DELETE_NOTES = 'DELETE_NOTES';
 export const RESTORE_NOTES = 'RESTORE_NOTES';
 export const CLEAR_SELECTION = 'CLEAR_SELECTION';
+export const REMOVE_LABEL = 'REMOVE_LABEL';
+export const ADD_LABEL = 'ADD_LABEL';
+export const UPDATE_IMAGE_UPLOAD = 'UPDATE_IMAGE_UPLOAD';
+

@@ -6,6 +6,7 @@ import { addNote } from "../redux/actions/notesActions";
 import Notelist from "./Notelist";
 
 
+
 const NoteInput = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [image, setImage] = useState(null);
@@ -13,6 +14,9 @@ const NoteInput = () => {
   const [showdrop, setShowdrop] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
+  const [noteItem, setNoteItem] = useState("");
+  const [ischeck, setIsCheck] = useState(false);
+
   
 
   const dropdownRef = useRef(null);
@@ -40,7 +44,8 @@ const NoteInput = () => {
 
   const toggledropdown = () => setShowDropDown(!showdropdown);
   const toggledrop = () => setShowdrop(!showdrop);
-
+  const togglecheck = () => setIsCheck(!ischeck);
+  // console.log(togglecheck);
   const handleclickoutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setShowDropDown(false);
@@ -65,6 +70,7 @@ const NoteInput = () => {
       id: Date.now(),
       title: noteTitle,
       content: noteText,
+      item: noteItem,
       image: image,
       timestamp: new Date().toISOString(),
     };
@@ -74,6 +80,7 @@ const NoteInput = () => {
     // Reset input
     setNoteText("");
     setNoteTitle("");
+    setNoteItem("");
     setImage(null);
     setIsExpanded(false);
   };  
@@ -107,12 +114,26 @@ const NoteInput = () => {
               placeholder="Take a note..."
               className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"
             />
+            <div>
+            <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300 relative ">
+                  add
+                </i>
+            <input type="text" 
+            placeholder="Add New Item"
+            value={noteItem}
+            onChange={(e) => setNoteItem(e.target.value)}
+            className="w-full bg-transparent outline-none text-gray-800 dark:text-white absolute ml-5"
+            />
+            </div>
+
             {image && <img src={image} alt="Note" className="mt-2 rounded w-full" />}
             {!isExpanded && (
               <div className="absolute flex right-2 bottom-2 space-x-2 text-gray-950 dark:text-white">
-                <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
+                <div>
+                <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300" onClick={togglecheck}>
                   check_box
                 </i>
+                </div>
                 <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
                   brush
                 </i>
@@ -120,6 +141,7 @@ const NoteInput = () => {
                     image
                   </i>
               </div>
+            
             )}
           </div>
           {isExpanded && (
