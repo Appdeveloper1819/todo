@@ -1,3 +1,4 @@
+import { toggleInputVisibility } from "../actions/notesActions";
 import {
   DELETE_NOTES,
   REMOVE_LABEL,
@@ -5,11 +6,13 @@ import {
   ADD_NOTE,
   ADD_LABEL,
   UPDATE_IMAGE_UPLOAD,
+  TOGGLE_INPUT_VISIBILITY,
 } from "../types/noteTypes";
 
 const initialState = {
   notes: [],
   deletedNotes: [],
+  inputVisible: false,
 };
 
 export default function notesReducer(State = initialState, action) {
@@ -74,7 +77,14 @@ export default function notesReducer(State = initialState, action) {
               : note
           ),
         };
+
+        case TOGGLE_INPUT_VISIBILITY:
+          return {
+            ...State,
+            inputVisible: !State.inputVisible,
+
+          }
     default:
       return State;
   }
-}
+};
