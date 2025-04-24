@@ -4,7 +4,6 @@ import Sidebar from "./sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../redux/actions/notesActions";
 import Notelist from "./Notelist";
-import { updateImageUpload } from "../redux/actions/notesActions";
 
 const NoteInput = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -14,7 +13,7 @@ const NoteInput = () => {
   const [noteText, setNoteText] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
   const [noteItem, setNoteItem] = useState("");
-  const [ischeck, setIsCheck] = useState(false);
+  const [showChecklist, setShowChecklist] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
 
   const dropdownRef = useRef(null);
@@ -25,23 +24,24 @@ const NoteInput = () => {
   const notes = useSelector((state) => state.notes?.notes ?? []);
   console.log("Current notes:", notes);
 
-// image handle
-  const handleImageUpload = (e, noteId) => {
+  // image handle
+  const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
     const reader = new FileReader();
     reader.onloadend = () => {
       const imageDataUrl = reader.result;
-      dispatch(updateImageUpload(noteId, imageDataUrl));
+      setImage(imageDataUrl);
     };
     reader.readAsDataURL(file);
   };
 
-
   const toggledropdown = () => setShowDropDown(!showdropdown);
   const toggledrop = () => setShowdrop(!showdrop);
-  const togglecheck = () => setIsCheck(!ischeck);
+  const toggleInputVisibility = () => {
+    setShowChecklist((prev) => !prev);
+  };
 
   const handleclickoutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -49,9 +49,10 @@ const NoteInput = () => {
       setShowdrop(false);
     }
     if (noteRef.current && !noteRef.current.contains(e.target)) {
-      // handleNoteSubmit();
       setIsExpanded(false);
+      setShowChecklist(false);
     }
+
   };
 
   useEffect(() => {
@@ -61,8 +62,6 @@ const NoteInput = () => {
 
   const handleNoteSubmit = () => {
     // if (!noteText.trim() && !noteTitle.trim() && !image) return;
-
-    
     const newNote = {
       id: Date.now(),
       title: noteTitle,
@@ -75,29 +74,33 @@ const NoteInput = () => {
     dispatch(addNote(newNote));
 
     // Reset input
-    setNoteText("");
-    setNoteTitle("");
-    setNoteItem("");
-    setImage("");
-    setIsExpanded(false);
+    handleDiscard();
   };
 
-  const newNote = () => {
-    if (!noteItem.trim()) return;
-    
-    const newChecklistNote = {
-      id: Date.now(),
-      title: "", 
-      content: "", 
-      item: noteItem.trim(),
-      image: "",
-      timestamp: new Date().toISOString(),
-    };
-  
-    dispatch(addNote(newChecklistNote));
-    setNoteItem("");
+  const handleDiscard = () => {
+    setNoteText(null);
+    setNoteTitle(null);
+    setNoteItem(null);
+    setImage(null);
+    setIsExpanded(false);
+    setShowChecklist(false);
   };
-  
+
+  // const newNote = () => {
+  //   if (!noteItem.trim()) return;
+
+  //   const newChecklistNote = {
+  //     id: Date.now(),
+  //     title: noteTitle.trim(),
+  //     content: "",
+  //     item: noteItem.trim(),
+  //     image: image.trim(),
+  //     timestamp: new Date().toISOString(),
+  //   };
+
+  //   dispatch(addNote(newChecklistNote));
+  //   setNoteItem("");
+  // };
 
   return (
     <>
@@ -109,14 +112,15 @@ const NoteInput = () => {
                      p-4 rounded-xl shadow-lg border border-gray-700 transition-all duration-300"
           ref={noteRef}
         >
-          {isExpanded && (
+          {/* first input expand */}
+          {isExpanded && !showChecklist && (
             <input
               type="text"
               value={noteTitle}
               onChange={(e) => setNoteTitle(e.target.value)}
               placeholder="Title"
               className="w-full bg-transparent text-lg font-semibold outline-none mb-2 text-gray-800 dark:text-white"
-              onKeyDown= {(e) => {
+              onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   e.preventDefault();
                   handleNoteSubmit();
@@ -128,50 +132,63 @@ const NoteInput = () => {
             onClick={() => setIsExpanded(true)}
             className="relative flex flex-col"
           >
-            <textarea
-              type="text"
-              value={noteText}
-              onChange={(e) => setNoteText(e.target.value)}
-              placeholder="Take a note..."
-              className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"
-              // onKeyDown= {(e) => {
-              //   if (e.key === "Enter") {
-              //     e.preventDefault();
-              //     handleNoteSubmit();
-              //   }
-              // }}
-            />
-            <div>
-              <i className="material-symbols-rounded cursor-pointer">
-                drag_indicator
-              </i>
-              <i
-                className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-              >
-                {inputFocused ? "check_box_outline_blank" : "add"}
-              </i>
-              <input
+            {!showChecklist && (
+              <textarea
                 type="text"
-                placeholder="Add New Item"
-                value={noteItem}
-                onChange={(e) => setNoteItem(e.target.value)}
-                onFocus={() => setInputFocused(true)}
-                onBlur={() => {setInputFocused(false);
-                  newNote();
-                }}
-                onKeyDown= {(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    newNote();
-                  }
-                }}
-                
-                className="bg-transparent outline-none text-gray-800 dark:text-white absolute ml-2"
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder="Take a note..."
+                className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"
+                // onKeyDown= {(e) => {
+                //   if (e.key === "Enter") {
+                //     e.preventDefault();
+                //     handleNoteSubmit();
+                //   }
+                // }}
               />
-              <i className="material-symbols-rounded cursor-pointer float-end">
-                {inputFocused ? "close" : ""}
-              </i>
-            </div>
+            )}
+
+            {/* second Expand input */}
+            {showChecklist && (
+              <div>
+                <input
+                  type="text"
+                  value={noteTitle}
+                  onChange={(e) => setNoteTitle(e.target.value)}
+                  placeholder="Title"
+                  className="w-full bg-transparent text-lg font-semibold outline-none mb-2 text-gray-800 dark:text-white"
+                />
+
+                <div className="flex items-center gap-2">
+                  <i
+                    className="material-symbols-rounded cursor-pointer"
+                  >
+                    drag_indicator
+                  </i>
+                  <i className="material-symbols-rounded cursor-pointer">
+                    {inputFocused ? "check_box_outline_blank" : "add"}
+                  </i>
+
+                  <input
+                    type="text"
+                    placeholder="Add New Item"
+                    value={noteItem}
+                    onChange={(e) => setNoteItem(e.target.value)}
+                    onFocus={() => setInputFocused(true)}
+                    // onBlur={() => {
+                    //   setInputFocused(false);
+                      // newNote();
+                    // }}
+                    className=" w-full bg-transparent outline-none text-gray-800 dark:text-white"
+                  />
+
+                  <i className="material-symbols-rounded cursor-pointer float-end">
+                    {inputFocused ? "close" : ""}
+                  </i>
+                </div>
+              </div>
+            )}
+
             {image && (
               <img src={image} alt="Note" className="mt-2 rounded w-full" />
             )}
@@ -180,7 +197,7 @@ const NoteInput = () => {
                 <div>
                   <i
                     className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                    onClick={togglecheck}
+                    onClick={() => toggleInputVisibility(true)}
                   >
                     check_box
                   </i>
@@ -295,7 +312,7 @@ const NoteInput = () => {
                   </button>
                 </div>
                 <button
-                  onClick={() => setIsExpanded(false)}
+                  onClick={handleDiscard}
                   className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0"
                 >
                   Close
