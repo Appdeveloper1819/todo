@@ -15,6 +15,7 @@ const NoteInput = () => {
   const [noteItem, setNoteItem] = useState("");
   const [showChecklist, setShowChecklist] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
 
   const dropdownRef = useRef(null);
   const noteRef = useRef(null);
@@ -52,7 +53,6 @@ const NoteInput = () => {
       setIsExpanded(false);
       setShowChecklist(false);
     }
-
   };
 
   useEffect(() => {
@@ -84,6 +84,7 @@ const NoteInput = () => {
     setImage(null);
     setIsExpanded(false);
     setShowChecklist(false);
+    setIsChecked(false);
   };
 
   // const newNote = () => {
@@ -160,13 +161,22 @@ const NoteInput = () => {
                 />
 
                 <div className="flex items-center gap-2">
-                  <i
-                    className="material-symbols-rounded cursor-pointer"
-                  >
+                  <i className="material-symbols-rounded cursor-pointer">
                     drag_indicator
                   </i>
-                  <i className="material-symbols-rounded cursor-pointer">
-                    {inputFocused ? "check_box_outline_blank" : "add"}
+                  <i
+                    className="material-symbols-rounded cursor-pointer"
+                    onClick={() => {
+                      if (inputFocused) {
+                        setIsChecked((prev) => !prev);
+                      }
+                    }}
+                  >
+                    {inputFocused
+                      ? isChecked
+                        ? "check_box"
+                        : "check_box_outline_blank"
+                      : "add"}
                   </i>
 
                   <input
@@ -177,7 +187,7 @@ const NoteInput = () => {
                     onFocus={() => setInputFocused(true)}
                     // onBlur={() => {
                     //   setInputFocused(false);
-                      // newNote();
+                    // newNote();
                     // }}
                     className=" w-full bg-transparent outline-none text-gray-800 dark:text-white"
                   />
