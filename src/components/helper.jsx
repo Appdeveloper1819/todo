@@ -12,7 +12,8 @@ const NoteInput = () => {
   const [showdrop, setShowdrop] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
-  const [noteItem, setNoteItem] = useState("");
+  const [noteItem, setNoteItem] = useState([]); 
+    const [noteItemInput, setNoteItemInput] = useState("");
   const [showChecklist, setShowChecklist] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
@@ -25,7 +26,7 @@ const NoteInput = () => {
   const notes = useSelector((state) => state.notes?.notes ?? []);
   console.log("Current notes:", notes);
 
-  // image handle
+  // Image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -40,11 +41,9 @@ const NoteInput = () => {
 
   const toggledropdown = () => setShowDropDown(!showdropdown);
   const toggledrop = () => setShowdrop(!showdrop);
-  const toggleInputVisibility = () => {
-    setShowChecklist((prev) => !prev);
-  };
+  const toggleInputVisibility = () => setShowChecklist((prev) => !prev);
 
-  const handleclickoutside = (e) => {
+  const handleClickOutside = (e) => {
     if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
       setShowDropDown(false);
       setShowdrop(false);
@@ -52,16 +51,16 @@ const NoteInput = () => {
     if (noteRef.current && !noteRef.current.contains(e.target)) {
       setIsExpanded(false);
       setShowChecklist(false);
+      handleDiscard(false);
     }
   };
 
   useEffect(() => {
-    document.addEventListener("mousedown", handleclickoutside);
-    return () => document.removeEventListener("mousedown", handleclickoutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleNoteSubmit = () => {
-    // if (!noteText.trim() && !noteTitle.trim() && !image) return;
     const newNote = {
       id: Date.now(),
       title: noteTitle,
@@ -72,36 +71,27 @@ const NoteInput = () => {
     };
     console.log("Dispatching note:", newNote);
     dispatch(addNote(newNote));
-
-    // Reset input
     handleDiscard();
   };
 
   const handleDiscard = () => {
-    setNoteText(null);
-    setNoteTitle(null);
-    setNoteItem(null);
+    setNoteText("");
+    setNoteTitle("");
+    setNoteItem([]);
+    setNoteItemInput("");
     setImage(null);
     setIsExpanded(false);
     setShowChecklist(false);
     setIsChecked(false);
   };
 
-  // const newNote = () => {
-  //   if (!noteItem.trim()) return;
-
-  //   const newChecklistNote = {
-  //     id: Date.now(),
-  //     title: noteTitle.trim(),
-  //     content: "",
-  //     item: noteItem.trim(),
-  //     image: image.trim(),
-  //     timestamp: new Date().toISOString(),
-  //   };
-
-  //   dispatch(addNote(newChecklistNote));
-  //   setNoteItem("");
-  // };
+  const handleChecklistKeyDown = (e) => {
+    if (e.key === "Enter" && noteItemInput.trim() !== "") {
+      e.preventDefault();
+      setNoteItem((prev) => [...prev, noteItemInput.trim()]);
+      setNoteItemInput("");
+    }
+  };
 
   return (
     <>
@@ -109,11 +99,10 @@ const NoteInput = () => {
       <Sidebar />
       <div className="flex flex-col items-center mt-5 px-4 sm:px-0">
         <div
-          className="w-full max-w-sm sm:max-w-md bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white 
-                     p-4 rounded-xl shadow-lg border border-gray-700 transition-all duration-300"
+          className="w-full max-w-sm sm:max-w-md bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-4 rounded-xl shadow-lg border border-gray-700 transition-all duration-300"
           ref={noteRef}
         >
-          {/* first input expand */}
+      
           {isExpanded && !showChecklist && (
             <input
               type="text"
@@ -133,23 +122,16 @@ const NoteInput = () => {
             onClick={() => setIsExpanded(true)}
             className="relative flex flex-col"
           >
+            
             {!showChecklist && (
               <textarea
-                type="text"
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Take a note..."
                 className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"
-                // onKeyDown= {(e) => {
-                //   if (e.key === "Enter") {
-                //     e.preventDefault();
-                //     handleNoteSubmit();
-                //   }
-                // }}
               />
             )}
 
-            {/* second Expand input */}
             {showChecklist && (
               <div>
                 <input
@@ -161,16 +143,10 @@ const NoteInput = () => {
                 />
 
                 <div className="flex items-center gap-2">
-                  <i className="material-symbols-rounded cursor-pointer">
-                    drag_indicator
-                  </i>
+                  <i className="material-symbols-rounded cursor-pointer">drag_indicator</i>
                   <i
                     className="material-symbols-rounded cursor-pointer"
-                    onClick={() => {
-                      if (inputFocused) {
-                        setIsChecked((prev) => !prev);
-                      }
-                    }}
+                    onClick={() => inputFocused && setIsChecked((prev) => !prev)}
                   >
                     {inputFocused
                       ? isChecked
@@ -182,19 +158,25 @@ const NoteInput = () => {
                   <input
                     type="text"
                     placeholder="Add New Item"
-                    value={noteItem}
-                    onChange={(e) => setNoteItem(e.target.value)}
+                    value={noteItemInput}
+                    onChange={(e) => setNoteItemInput(e.target.value)}
+                    onKeyDown={handleChecklistKeyDown}
                     onFocus={() => setInputFocused(true)}
-                    // onBlur={() => {
-                    //   setInputFocused(false);
-                    // newNote();
-                    // }}
-                    className=" w-full bg-transparent outline-none text-gray-800 dark:text-white"
+                    className="w-full bg-transparent outline-none text-gray-800 dark:text-white"
                   />
 
                   <i className="material-symbols-rounded cursor-pointer float-end">
                     {inputFocused ? "close" : ""}
                   </i>
+                </div>
+
+                <div className="mt-2">
+                  {noteItem.map((item, index) => (
+                    <div key={index} className="flex items-center gap-2 mb-1">
+                      <i className="material-symbols-rounded">check_box_outline_blank</i>
+                      <span className="text-gray-800 dark:text-white">{item}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
             )}
@@ -202,12 +184,13 @@ const NoteInput = () => {
             {image && (
               <img src={image} alt="Note" className="mt-2 rounded w-full" />
             )}
+
             {!isExpanded && (
               <div className="absolute flex right-2 bottom-2 space-x-2 text-gray-950 dark:text-white">
                 <div>
                   <i
                     className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                    onClick={() => toggleInputVisibility(true)}
+                    onClick={toggleInputVisibility}
                   >
                     check_box
                   </i>
@@ -224,6 +207,7 @@ const NoteInput = () => {
               </div>
             )}
           </div>
+
           {isExpanded && (
             <>
               <div className="flex flex-wrap justify-between items-center mt-4 text-gray-950 dark:text-white">
@@ -239,10 +223,7 @@ const NoteInput = () => {
                       notifications
                     </i>
                     {showdrop && (
-                      <div
-                        className="absolute left-0 sm:right-0 mt-2 w-48 sm:w-64 bg-white dark:bg-gray-800 
-                                      rounded-md shadow-lg z-50"
-                      >
+                      <div className="absolute left-0 sm:right-0 mt-2 w-48 sm:w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50">
                         <ul className="py-2 text-gray-700 dark:text-white">
                           <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
                             Remind me later
@@ -283,6 +264,7 @@ const NoteInput = () => {
                   <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
                     archive
                   </i>
+
                   <div className="relative" ref={dropdownRef}>
                     <i
                       className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
@@ -321,6 +303,7 @@ const NoteInput = () => {
                     Save
                   </button>
                 </div>
+
                 <button
                   onClick={handleDiscard}
                   className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0"
@@ -331,6 +314,7 @@ const NoteInput = () => {
             </>
           )}
         </div>
+
         <input
           type="file"
           accept="image/*"
@@ -338,9 +322,11 @@ const NoteInput = () => {
           onChange={handleImageUpload}
           className="hidden"
         />
+
         <Notelist />
       </div>
     </>
   );
 };
+
 export default NoteInput;
