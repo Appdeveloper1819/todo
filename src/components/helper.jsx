@@ -51,6 +51,7 @@ const NoteInput = () => {
     if (noteRef.current && !noteRef.current.contains(e.target)) {
       setIsExpanded(false);
       setShowChecklist(false);
+      handleDiscard(false);
     }
   };
 
