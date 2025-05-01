@@ -90,7 +90,7 @@ const Sidebar = ({ showSearch }) => {
           </button>
           {isSidebarOpen && (
             <div className="flex items-center space-x-2 mr-6">
-              <i className="material-symbols-rounded text-lg">task</i>
+              <i className="material-symbols-rounded text-lg">cross</i>
               <span className="text-lg font-semibold">Short Notes</span>
             </div>
           )}
