@@ -143,7 +143,7 @@ const NoteInput = () => {
                 />
 
                 <div className="flex items-center gap-2">
-                  <i className="material-symbols-rounded cursor-pointer">drag_indicator</i>
+                  <i className="material-symbols-rounded cursor-pointer hidden">drag_indicator</i>
                   <i
                     className="material-symbols-rounded cursor-pointer"
                     onClick={() => inputFocused && setIsChecked((prev) => !prev)}
@@ -173,7 +173,7 @@ const NoteInput = () => {
                 <div className="mt-2">
                   {noteItem.map((item, index) => (
                     <div key={index} className="flex items-center gap-2 mb-1">
-                      <i className="material-symbols-rounded">check_box_outline_blank</i>
+                      <i className="material-symbols-rounded cursor-pointer">check_box_outline_blank</i>
                       <span className="text-gray-800 dark:text-white">{item}</span>
                     </div>
                   ))}
