@@ -9,7 +9,7 @@ const Sidebar = ({ showSearch }) => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const [labels, setLabels] = useState([]);
   const [lableInput, setLabelInput] = useState("");
-  const [changeicon, setchangeicon] = useState(false);
+  const [hover, setHover] = useState(null);
   const editRef = useRef(null);
   const sidebarRef = useRef(null);
 
@@ -21,10 +21,6 @@ const Sidebar = ({ showSearch }) => {
     setShowEditPopup(!showEditPopup);
   };
 
-  const toggleChange = () => {
-    setchangeicon(!changeicon);
-  };
-  
 
   const handleClickOutside = (e) => {
     if (editRef.current && !editRef.current.contains(e.target)) {
@@ -50,7 +46,7 @@ const Sidebar = ({ showSearch }) => {
   const handleSaveLabel = () => {
     const trimmed = lableInput.trim();
     if (!trimmed) return;
-    addNewLabel(trimmed);
+    addNewLabel(lableInput.trim());
     setShowEditPopup(true);
   };
 
@@ -90,52 +86,35 @@ const Sidebar = ({ showSearch }) => {
           </button>
           {isSidebarOpen && (
             <div className="flex items-center space-x-2 mr-6">
-              <i className="material-symbols-rounded text-lg">cross</i>
+              <i className="material-symbols-rounded text-lg">task</i>
               <span className="text-lg font-semibold">Short Notes</span>
             </div>
           )}
         </div>
 
         <div className="mt-5 space-y-4">
-          <Link
-            to="/"
-            className="flex items-center space-x-2 hover:text-orange-500"
-          >
+          <Link to="/"  className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">home</i>
             {isSidebarOpen && <span>Home</span>}
           </Link>
-          <Link
-            to="/Notes"
-            className="flex items-center space-x-2 hover:text-orange-500"
-          >
+          <Link to="/Notes" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">lightbulb_2</i>
             {isSidebarOpen && <span>Notes</span>}
           </Link>
-          <Link
-            to="/reminders"
-            className="flex items-center space-x-2 hover:text-orange-500"
-          >
+          <Link to="/reminders" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">notifications</i>
             {isSidebarOpen && <span>Reminders</span>}
           </Link>
-          <div
-            className="flex items-center space-x-2 hover:text-orange-500 cursor-pointer"
-            onClick={toggleEditPopup}
-          >
+          <div className="flex items-center space-x-2 hover:text-orange-500 cursor-pointer"
+            onClick={toggleEditPopup}>
             <i className="material-symbols-rounded">edit</i>
             {isSidebarOpen && <span>Edit Label</span>}
           </div>
-          <Link
-            to="/archive"
-            className="flex items-center space-x-2 hover:text-orange-500"
-          >
+          <Link to="/archive" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">archive</i>
             {isSidebarOpen && <span>Archive</span>}
           </Link>
-          <Link
-            to="/bin"
-            className="flex items-center space-x-2 hover:text-orange-500"
-          >
+          <Link to="/bin" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">delete</i>
             {isSidebarOpen && <span>Bin</span>}
           </Link>
@@ -145,23 +124,21 @@ const Sidebar = ({ showSearch }) => {
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 sm:hidden z-30"
-          onClick={toggleSidebar}
-        ></div>
+          onClick={toggleSidebar}></div>
       )}
 
       {showEditPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4 sm:px-0">
           <div
             ref={editRef}
-            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 max-w-xs sm:max-w-md"
-          >
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 max-w-xs sm:max-w-md">
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               Edit Labels
             </h2>
             <div className="relative flex items-center">
               <i
                 className="material-symbols-rounded text-gray-500 cursor-pointer mr-2"
-                onClick={() => setLabelInput("")}
+                // onClick={() => setLabelInput("")}
               >
                 {lableInput ? "close" : "add"}
               </i>
@@ -186,13 +163,13 @@ const Sidebar = ({ showSearch }) => {
                   {labels.map((label, index) => (
                     <li
                       key={index}
-                      className="flex items-center justify-between mb-2"
-                    >
+                      className="flex items-center justify-between mb-2">
                       <i
                         className="material-symbols-rounded mr-2 text-gray-500 cursor-pointer"
-                        onMouseEnter={() => toggleChange(true)}
-                        onMouseLeave={() => toggleChange(false)}>
-                        {changeicon ? "delete" : "label"}
+                        onMouseEnter={() => setHover(index)}
+                        onMouseLeave={() => setHover(null)}
+                        >
+                        {hover === index ? "delete" : "label"}
                       </i>
                       <span className="flex-grow">{label}</span>
                       <i
@@ -216,8 +193,7 @@ const Sidebar = ({ showSearch }) => {
                   lableInput ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
                 }`}
                 disabled={!lableInput}
-                onClick={handleSaveLabel}
-              >
+                onClick={handleSaveLabel}>
                 Save
               </button>
             </div>
