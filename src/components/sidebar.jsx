@@ -138,7 +138,7 @@ const Sidebar = ({ showSearch }) => {
             <div className="relative flex items-center">
               <i
                 className="material-symbols-rounded text-gray-500 cursor-pointer mr-2"
-                // onClick={() => setLabelInput("")}
+                onClick={() => setLabelInput("")}
               >
                 {lableInput ? "close" : "add"}
               </i>
