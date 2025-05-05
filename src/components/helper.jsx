@@ -4,6 +4,7 @@ import Sidebar from "./sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { addNote } from "../redux/actions/notesActions";
 import Notelist from "./Notelist";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 const NoteInput = () => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -12,11 +13,12 @@ const NoteInput = () => {
   const [showdrop, setShowdrop] = useState(false);
   const [noteText, setNoteText] = useState("");
   const [noteTitle, setNoteTitle] = useState("");
-  const [noteItem, setNoteItem] = useState([]); 
-    const [noteItemInput, setNoteItemInput] = useState("");
+  const [noteItem, setNoteItem] = useState([]);
+  const [noteItemInput, setNoteItemInput] = useState("");
   const [showChecklist, setShowChecklist] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+
 
   const dropdownRef = useRef(null);
   const noteRef = useRef(null);
@@ -26,7 +28,6 @@ const NoteInput = () => {
   const notes = useSelector((state) => state.notes?.notes ?? []);
   console.log("Current notes:", notes);
 
-  // Image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -37,6 +38,11 @@ const NoteInput = () => {
       setImage(imageDataUrl);
     };
     reader.readAsDataURL(file);
+  };
+
+
+  const handleCheck = (index) => {
+    setIsChecked(index); 
   };
 
   const toggledropdown = () => setShowDropDown(!showdropdown);
@@ -93,6 +99,14 @@ const NoteInput = () => {
     }
   };
 
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    const items = Array.from(noteItem);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    setNoteItem(items);
+  };
+
   return (
     <>
       <Navbar />
@@ -102,7 +116,6 @@ const NoteInput = () => {
           className="w-full max-w-sm sm:max-w-md bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-4 rounded-xl shadow-lg border border-gray-700 transition-all duration-300"
           ref={noteRef}
         >
-      
           {isExpanded && !showChecklist && (
             <input
               type="text"
@@ -122,7 +135,6 @@ const NoteInput = () => {
             onClick={() => setIsExpanded(true)}
             className="relative flex flex-col"
           >
-            
             {!showChecklist && (
               <textarea
                 value={noteText}
@@ -143,12 +155,16 @@ const NoteInput = () => {
                 />
 
                 <div className="flex items-center gap-2">
-                  <i className="material-symbols-rounded cursor-pointer hidden">drag_indicator</i>
+                  <i className="material-symbols-rounded cursor-pointer">
+                    drag_indicator
+                  </i>
                   <i
                     className="material-symbols-rounded cursor-pointer"
-                    onClick={() => inputFocused && setIsChecked((prev) => !prev)}
+                    onClick={() =>
+                      noteItemInput.trim() && setIsChecked((prev) => !prev)
+                    }
                   >
-                    {inputFocused
+                    {noteItemInput.trim()
                       ? isChecked
                         ? "check_box"
                         : "check_box_outline_blank"
@@ -170,14 +186,45 @@ const NoteInput = () => {
                   </i>
                 </div>
 
-                <div className="mt-2">
-                  {noteItem.map((item, index) => (
-                    <div key={index} className="flex items-center gap-2 mb-1">
-                      <i className="material-symbols-rounded cursor-pointer">check_box_outline_blank</i>
-                      <span className="text-gray-800 dark:text-white">{item}</span>
-                    </div>
-                  ))}
-                </div>
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <Droppable droppableId="checklist">
+                    {(provided) => (
+                      <div
+                        {...provided.droppableProps}
+                        ref={provided.innerRef}
+                        className="mt-2"
+                      >
+                        {noteItem.map((item, index) => (
+                          <Draggable
+                            key={index}
+                            draggableId={index.toString()}
+                            index={index}
+                          >
+                            {(provided) => (
+                              <div
+                                className="flex items-center gap-2 mb-1"
+                                ref={provided.innerRef}
+                                {...provided.draggableProps}
+                                {...provided.dragHandleProps}
+                              >
+                                <i className="material-symbols-rounded cursor-move">
+                                  drag_indicator 
+                                </i>
+                                <i className="material-symbols-rounded cursor-pointer" onClick={() => handleCheck(index)}>
+                                {isChecked === index ? "check_box" : "check_box_outline_blank"}
+                                </i>
+                                <span className="text-gray-800 dark:text-white">
+                                  {item}
+                                </span>
+                              </div>
+                            )}
+                          </Draggable>
+                        ))}
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                </DragDropContext>
               </div>
             )}
 
@@ -209,109 +256,106 @@ const NoteInput = () => {
           </div>
 
           {isExpanded && (
-            <>
-              <div className="flex flex-wrap justify-between items-center mt-4 text-gray-950 dark:text-white">
-                <div className="flex flex-wrap gap-2">
-                  <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
-                    palette
-                  </i>
-                  <div className="relative sm:mt-0" ref={dropdownRef}>
-                    <i
-                      className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                      onClick={toggledrop}
-                    >
-                      notifications
-                    </i>
-                    {showdrop && (
-                      <div className="absolute left-0 sm:right-0 mt-2 w-48 sm:w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50">
-                        <ul className="py-2 text-gray-700 dark:text-white">
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Remind me later
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Saved in Google reminders
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Later today
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Tomorrow
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Next Week
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Select date and time
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Select place
-                          </li>
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-
-                  <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
-                    person_add
-                  </i>
+            <div className="flex flex-wrap justify-between items-center mt-4 text-gray-950 dark:text-white">
+              <div className="flex flex-wrap gap-2">
+                <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
+                  palette
+                </i>
+                <div className="relative sm:mt-0" ref={dropdownRef}>
                   <i
                     className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                    onClick={() => fileInputRef.current.click()}
+                    onClick={toggledrop}
                   >
-                    image
+                    notifications
                   </i>
-
-                  <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
-                    archive
-                  </i>
-
-                  <div className="relative" ref={dropdownRef}>
-                    <i
-                      className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                      onClick={toggledropdown}
-                    >
-                      more_vert
-                    </i>
-                    {showdropdown && (
-                      <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg">
-                        <ul className="py-2 text-gray-700 dark:text-white">
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Add label
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Add drawing
-                          </li>
-                          <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
-                            Show tick boxes
-                          </li>
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-
-                  <i className="material-symbols-rounded cursor-pointer opacity-50">
-                    undo
-                  </i>
-                  <i className="material-symbols-rounded cursor-pointer opacity-50">
-                    redo
-                  </i>
-
-                  <button
-                    onClick={handleNoteSubmit}
-                    className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                  >
-                    Save
-                  </button>
+                  {showdrop && (
+                    <div className="absolute left-0 sm:right-0 mt-2 w-48 sm:w-64 bg-white dark:bg-gray-800 rounded-md shadow-lg z-50">
+                      <ul className="py-2 text-gray-700 dark:text-white">
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Remind me later
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Saved in Google reminders
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Later today
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Tomorrow
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Next Week
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Select date and time
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Select place
+                        </li>
+                      </ul>
+                    </div>
+                  )}
                 </div>
 
-                <button
-                  onClick={handleDiscard}
-                  className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0"
+                <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
+                  person_add
+                </i>
+                <i
+                  className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
+                  onClick={() => fileInputRef.current.click()}
                 >
-                  Close
+                  image
+                </i>
+                <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
+                  archive
+                </i>
+
+                <div className="relative" ref={dropdownRef}>
+                  <i
+                    className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
+                    onClick={toggledropdown}
+                  >
+                    more_vert
+                  </i>
+                  {showdropdown && (
+                    <div className="absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 rounded-md shadow-lg">
+                      <ul className="py-2 text-gray-700 dark:text-white">
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Add label
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Add drawing
+                        </li>
+                        <li className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 cursor-pointer">
+                          Show tick boxes
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <i className="material-symbols-rounded cursor-pointer opacity-50">
+                  undo
+                </i>
+                <i className="material-symbols-rounded cursor-pointer opacity-50">
+                  redo
+                </i>
+
+                <button
+                  onClick={handleNoteSubmit}
+                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+                >
+                  Save
                 </button>
               </div>
-            </>
+
+              <button
+                onClick={handleDiscard}
+                className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0"
+              >
+                Close
+              </button>
+            </div>
           )}
         </div>
 
@@ -322,7 +366,6 @@ const NoteInput = () => {
           onChange={handleImageUpload}
           className="hidden"
         />
-
         <Notelist />
       </div>
     </>
