@@ -10,6 +10,7 @@ const Sidebar = ({ showSearch }) => {
   const [labels, setLabels] = useState([]);
   const [lableInput, setLabelInput] = useState("");
   const [hover, setHover] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(null);
   const editRef = useRef(null);
   const sidebarRef = useRef(null);
 
@@ -19,16 +20,20 @@ const Sidebar = ({ showSearch }) => {
 
   const toggleEditPopup = () => {
     setShowEditPopup(!showEditPopup);
+    setLabelInput("");
+    setEditingIndex(null);
   };
-
 
   const handleClickOutside = (e) => {
     if (editRef.current && !editRef.current.contains(e.target)) {
       setShowEditPopup(false);
+      setLabelInput("");
+      setEditingIndex(null);
     }
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setIsSidebarOpen(false);
       setLabelInput("");
+      setEditingIndex(null);
     }
   };
 
@@ -37,24 +42,30 @@ const Sidebar = ({ showSearch }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const addNewLabel = (newLabel) => {
-    dispatch(addLabel(newLabel));
-    setLabels((prev) => [...prev, newLabel]);
-    setLabelInput("");
-  };
-
   const handleSaveLabel = () => {
     const trimmed = lableInput.trim();
     if (!trimmed) return;
-    addNewLabel(lableInput.trim());
-    setShowEditPopup(true);
+
+    if (editingIndex !== null) {
+      // Edit existing label
+      const updatedLabels = [...labels];
+      updatedLabels[editingIndex] = trimmed;
+      setLabels(updatedLabels);
+      setEditingIndex(null);
+    } else {
+      // Add new label
+      setLabels((prev) => [...prev, trimmed]);
+      dispatch(addLabel(trimmed));
+    }
+
+    setLabelInput("");
+    setShowEditPopup(true); // optionally keep it open
   };
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter" && lableInput.trim() !== "") {
       e.preventDefault();
-      addNewLabel(lableInput.trim());
-      setShowEditPopup(true);
+      handleSaveLabel();
     }
   };
 
@@ -65,9 +76,7 @@ const Sidebar = ({ showSearch }) => {
           className="sm:hidden fixed top-4 left-2 bg-gray-300 dark:bg-gray-700 rounded-full shadow-lg z-[100]"
           onClick={toggleSidebar}
         >
-          <i className="material-symbols-rounded text-gray-600 dark:text-gray-300">
-            menu
-          </i>
+          <i className="material-symbols-rounded text-gray-600 dark:text-gray-300">menu</i>
         </button>
       )}
 
@@ -93,7 +102,7 @@ const Sidebar = ({ showSearch }) => {
         </div>
 
         <div className="mt-5 space-y-4">
-          <Link to="/"  className="flex items-center space-x-2 hover:text-orange-500">
+          <Link to="/" className="flex items-center space-x-2 hover:text-orange-500">
             <i className="material-symbols-rounded">home</i>
             {isSidebarOpen && <span>Home</span>}
           </Link>
@@ -105,8 +114,10 @@ const Sidebar = ({ showSearch }) => {
             <i className="material-symbols-rounded">notifications</i>
             {isSidebarOpen && <span>Reminders</span>}
           </Link>
-          <div className="flex items-center space-x-2 hover:text-orange-500 cursor-pointer"
-            onClick={toggleEditPopup}>
+          <div
+            className="flex items-center space-x-2 hover:text-orange-500 cursor-pointer"
+            onClick={toggleEditPopup}
+          >
             <i className="material-symbols-rounded">edit</i>
             {isSidebarOpen && <span>Edit Label</span>}
           </div>
@@ -124,14 +135,16 @@ const Sidebar = ({ showSearch }) => {
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 sm:hidden z-30"
-          onClick={toggleSidebar}></div>
+          onClick={toggleSidebar}
+        ></div>
       )}
 
       {showEditPopup && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 px-4 sm:px-0">
           <div
             ref={editRef}
-            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 max-w-xs sm:max-w-md">
+            className="bg-white dark:bg-gray-900 p-6 rounded-lg shadow-lg w-96 max-w-xs sm:max-w-md"
+          >
             <h2 className="text-lg font-semibold mb-4 text-gray-900 dark:text-white">
               Edit Labels
             </h2>
@@ -142,14 +155,14 @@ const Sidebar = ({ showSearch }) => {
               >
                 {lableInput ? "close" : "add"}
               </i>
-                <input
-                  type="text"
-                  placeholder="Create new label"
-                  value={lableInput}
-                  onChange={(e) => setLabelInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  className="w-full border-b border-gray-400 dark:border-gray-600 outline-none p-2 mb-4 bg-transparent text-gray-900 dark:text-white"
-                />
+              <input
+                type="text"
+                placeholder="Create new label"
+                value={lableInput}
+                onChange={(e) => setLabelInput(e.target.value)}
+                onKeyDown={handleKeyDown}
+                className="w-full border-b border-gray-400 dark:border-gray-600 outline-none p-2 mb-4 bg-transparent text-gray-900 dark:text-white"
+              />
               {lableInput && (
                 <i className="material-symbols-rounded text-green-500 cursor-pointer ml-2">
                   check
@@ -161,19 +174,23 @@ const Sidebar = ({ showSearch }) => {
               {labels.length > 0 && (
                 <ul className="text-gray-800 dark:text-gray-200">
                   {labels.map((label, index) => (
-                    <li
-                      key={index}
-                      className="flex items-center justify-between mb-2">
+                    <li key={index} className="flex items-center justify-between mb-2">
                       <i
                         className="material-symbols-rounded mr-2 text-gray-500 cursor-pointer"
                         onMouseEnter={() => setHover(index)}
                         onMouseLeave={() => setHover(null)}
-                        >
+                      >
                         {hover === index ? "delete" : "label"}
                       </i>
                       <span className="flex-grow">{label}</span>
                       <i
-                        className="material-symbols-rounded ml-2 text-gray-500 hover:text-red-500 cursor-pointer">
+                        className="material-symbols-rounded ml-2 text-gray-500 hover:text-blue-500 cursor-pointer"
+                        onClick={() => {
+                          setLabelInput(label);
+                          setEditingIndex(index);
+                          setShowEditPopup(true);
+                        }}
+                      >
                         edit
                       </i>
                     </li>
@@ -185,7 +202,8 @@ const Sidebar = ({ showSearch }) => {
             <div className="flex justify-end space-x-2">
               <button
                 className="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded sm:w-auto"
-                onClick={toggleEditPopup}>
+                onClick={toggleEditPopup}
+              >
                 Cancel
               </button>
               <button
@@ -193,8 +211,9 @@ const Sidebar = ({ showSearch }) => {
                   lableInput ? "bg-blue-500" : "bg-gray-400 cursor-not-allowed"
                 }`}
                 disabled={!lableInput}
-                onClick={handleSaveLabel}>
-                Save
+                onClick={handleSaveLabel}
+              >
+                {editingIndex !== null ? "Update" : "Save"}
               </button>
             </div>
           </div>

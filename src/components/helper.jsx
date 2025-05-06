@@ -18,6 +18,7 @@ const NoteInput = () => {
   const [showChecklist, setShowChecklist] = useState(false);
   const [inputFocused, setInputFocused] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [hoverindex, setHoverIndex] = useState(false);
 
 
   const dropdownRef = useRef(null);
@@ -114,8 +115,7 @@ const NoteInput = () => {
       <div className="flex flex-col items-center mt-5 px-4 sm:px-0">
         <div
           className="w-full max-w-sm sm:max-w-md bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white p-4 rounded-xl shadow-lg border border-gray-700 transition-all duration-300"
-          ref={noteRef}
-        >
+          ref={noteRef}>
           {isExpanded && !showChecklist && (
             <input
               type="text"
@@ -128,20 +128,17 @@ const NoteInput = () => {
                   e.preventDefault();
                   handleNoteSubmit();
                 }
-              }}
-            />
+              }}/>
           )}
           <div
             onClick={() => setIsExpanded(true)}
-            className="relative flex flex-col"
-          >
+            className="relative flex flex-col">
             {!showChecklist && (
               <textarea
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
-                placeholder="Take a note..."
-                className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"
-              />
+                placeholder="Take a note..." 
+                className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"/>
             )}
 
             {showChecklist && (
@@ -151,19 +148,17 @@ const NoteInput = () => {
                   value={noteTitle}
                   onChange={(e) => setNoteTitle(e.target.value)}
                   placeholder="Title"
-                  className="w-full bg-transparent text-lg font-semibold outline-none mb-2 text-gray-800 dark:text-white"
-                />
+                  className="w-full bg-transparent text-lg font-semibold outline-none mb-2 text-gray-800 dark:text-white"/>
 
                 <div className="flex items-center gap-2">
-                  <i className="material-symbols-rounded cursor-pointer">
+                  {/* <i className="material-symbols-rounded cursor-pointer">
                     drag_indicator
-                  </i>
+                  </i> */}
                   <i
                     className="material-symbols-rounded cursor-pointer"
                     onClick={() =>
                       noteItemInput.trim() && setIsChecked((prev) => !prev)
-                    }
-                  >
+                    }>
                     {noteItemInput.trim()
                       ? isChecked
                         ? "check_box"
@@ -178,10 +173,9 @@ const NoteInput = () => {
                     onChange={(e) => setNoteItemInput(e.target.value)}
                     onKeyDown={handleChecklistKeyDown}
                     onFocus={() => setInputFocused(true)}
-                    className="w-full bg-transparent outline-none text-gray-800 dark:text-white"
-                  />
+                    className="w-full bg-transparent outline-none text-gray-800 dark:text-white"/>
 
-                  <i className="material-symbols-rounded cursor-pointer float-end">
+                  <i className="material-symbols-rounded cursor-pointer float-end hidden">
                     {inputFocused ? "close" : ""}
                   </i>
                 </div>
@@ -192,30 +186,36 @@ const NoteInput = () => {
                       <div
                         {...provided.droppableProps}
                         ref={provided.innerRef}
-                        className="mt-2"
-                      >
+                        className="mt-2">
                         {noteItem.map((item, index) => (
                           <Draggable
                             key={index}
                             draggableId={index.toString()}
-                            index={index}
-                          >
+                            index={index}>
                             {(provided) => (
                               <div
-                                className="flex items-center gap-2 mb-1"
+                                className="flex  gap-2 mb-1 items-center" 
+                                onMouseEnter={() => setHoverIndex(index)}
+                                onMouseLeave={() => setHoverIndex("")}
                                 ref={provided.innerRef}
                                 {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
+                                {...provided.dragHandleProps}>
+                                {hoverindex === index && (
                                 <i className="material-symbols-rounded cursor-move">
                                   drag_indicator 
                                 </i>
+                                )}
                                 <i className="material-symbols-rounded cursor-pointer" onClick={() => handleCheck(index)}>
                                 {isChecked === index ? "check_box" : "check_box_outline_blank"}
                                 </i>
                                 <span className="text-gray-800 dark:text-white">
                                   {item}
                                 </span>
+                                {hoverindex === index && (
+                                <i className="material-symbols-rounded cursor-pointer ml-auto">
+                                 close 
+                                </i>
+                                )}
                               </div>
                             )}
                           </Draggable>
@@ -237,8 +237,7 @@ const NoteInput = () => {
                 <div>
                   <i
                     className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                    onClick={toggleInputVisibility}
-                  >
+                    onClick={toggleInputVisibility}>
                     check_box
                   </i>
                 </div>
@@ -247,8 +246,7 @@ const NoteInput = () => {
                 </i>
                 <i
                   className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                  onClick={() => fileInputRef.current.click()}
-                >
+                  onClick={() => fileInputRef.current.click()}>
                   image
                 </i>
               </div>
@@ -264,8 +262,7 @@ const NoteInput = () => {
                 <div className="relative sm:mt-0" ref={dropdownRef}>
                   <i
                     className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                    onClick={toggledrop}
-                  >
+                    onClick={toggledrop}>
                     notifications
                   </i>
                   {showdrop && (
@@ -302,8 +299,7 @@ const NoteInput = () => {
                 </i>
                 <i
                   className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                  onClick={() => fileInputRef.current.click()}
-                >
+                  onClick={() => fileInputRef.current.click()}>
                   image
                 </i>
                 <i className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300">
@@ -313,8 +309,7 @@ const NoteInput = () => {
                 <div className="relative" ref={dropdownRef}>
                   <i
                     className="material-symbols-rounded cursor-pointer hover:text-slate-500 dark:hover:text-gray-300"
-                    onClick={toggledropdown}
-                  >
+                    onClick={toggledropdown}>
                     more_vert
                   </i>
                   {showdropdown && (
@@ -343,16 +338,14 @@ const NoteInput = () => {
 
                 <button
                   onClick={handleNoteSubmit}
-                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                >
+                  className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
                   Save
                 </button>
               </div>
 
               <button
                 onClick={handleDiscard}
-                className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0"
-              >
+                className="text-gray-950 dark:text-white hover:text-slate-500 dark:hover:text-gray-300 mt-2 sm:mt-0">
                 Close
               </button>
             </div>
@@ -364,8 +357,7 @@ const NoteInput = () => {
           accept="image/*"
           ref={fileInputRef}
           onChange={handleImageUpload}
-          className="hidden"
-        />
+          className="hidden"/>
         <Notelist />
       </div>
     </>
