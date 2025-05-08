@@ -10,7 +10,7 @@ const Sidebar = ({ showSearch }) => {
   const [labels, setLabels] = useState([]);
   const [lableInput, setLabelInput] = useState("");
   const [hover, setHover] = useState(null);
-  const [editingIndex, setEditingIndex] = useState(null);
+  const [editingIndex, setEditingIndex] = useState(false);
   const editRef = useRef(null);
   const sidebarRef = useRef(null);
 
@@ -21,19 +21,19 @@ const Sidebar = ({ showSearch }) => {
   const toggleEditPopup = () => {
     setShowEditPopup(!showEditPopup);
     setLabelInput("");
-    setEditingIndex(null);
+    // setEditingIndex(null);
   };
 
   const handleClickOutside = (e) => {
     if (editRef.current && !editRef.current.contains(e.target)) {
       setShowEditPopup(false);
-      setLabelInput("");
-      setEditingIndex(null);
+      // setLabelInput("");
+      // setEditingIndex(null);
     }
     if (sidebarRef.current && !sidebarRef.current.contains(e.target)) {
       setIsSidebarOpen(false);
-      setLabelInput("");
-      setEditingIndex(null);
+      // setLabelInput("");
+      // setEditingIndex(null);
     }
   };
 
@@ -47,19 +47,17 @@ const Sidebar = ({ showSearch }) => {
     if (!trimmed) return;
 
     if (editingIndex !== null) {
-      // Edit existing label
       const updatedLabels = [...labels];
       updatedLabels[editingIndex] = trimmed;
       setLabels(updatedLabels);
       setEditingIndex(null);
     } else {
-      // Add new label
       setLabels((prev) => [...prev, trimmed]);
       dispatch(addLabel(trimmed));
     }
 
     setLabelInput("");
-    setShowEditPopup(true); // optionally keep it open
+    setShowEditPopup(true);
   };
 
   const handleKeyDown = (e) => {
@@ -161,6 +159,7 @@ const Sidebar = ({ showSearch }) => {
                 value={lableInput}
                 onChange={(e) => setLabelInput(e.target.value)}
                 onKeyDown={handleKeyDown}
+                // onBlur={setEditingIndex}
                 className="w-full border-b border-gray-400 dark:border-gray-600 outline-none p-2 mb-4 bg-transparent text-gray-900 dark:text-white"
               />
               {lableInput && (
@@ -189,8 +188,7 @@ const Sidebar = ({ showSearch }) => {
                           setLabelInput(label);
                           setEditingIndex(index);
                           setShowEditPopup(true);
-                        }}
-                      >
+                        }}>
                         edit
                       </i>
                     </li>

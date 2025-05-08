@@ -57,21 +57,21 @@ const Notelist = () => {
         <Navlist selectnote={selectnote} setSelectNote={setSelectNote} />
       </nav>
 
-      <div className="p-4">
+      <div className=" grid grid-cols-3 md:flex-row md:flex-wrap gap-4">
         {notes.length === 0 ? (
-          <p className="text-gray-600 text-center">No notes yet.</p>
+          <p className="text-gray-600 items-center ml-3.5">No notes yet.</p>
         ) : (
           notes.map((note) => (
             <div
               key={note.id}
               onMouseEnter={() => handleExpand(note.id)}
               onMouseLeave={() => handleExpand(null)}
-              className="cursor-pointer bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-4 max-w-md mx-auto transition duration-300 hover:shadow-lg"
+              className=" relative cursor-pointer h-fit bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md mb-4 max-w-md mx-auto transition duration-300 hover:shadow-lg"
             >
               {expandedNoteId === note.id && (
-                <div className="float-left text-gray-500 dark:text-gray-400">
+                <div className=" absolute -top-2 -left-2 text-gray-500 dark:text-gray-400">
                   <i
-                    className={`material-symbols-rounded ${
+                    className={`material-symbols-rounded  ${
                       selectnote.includes(note.id)
                         ? "text-blue-400"
                         : "text-gray-400"
@@ -87,7 +87,7 @@ const Notelist = () => {
                 <div className="flex float-right text-gray-500 dark:text-gray-400">
                   <i className="material-symbols-rounded">keep</i>
                 </div>
-              )}
+             )} 
 
               {note.title && (
                 <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
@@ -96,7 +96,7 @@ const Notelist = () => {
               )}
 
               {note.content && (
-                <p className="text-gray-700 dark:text-gray-300 mb-2">
+                <p className="text-gray-700 dark:text-gray-300 mb-2 w-full bg-transparent outline-none max-h-60 whitespace-pre-wrap break-words overflow-hidden md:w-1/3">
                   {note.content}
                 </p>
               )}

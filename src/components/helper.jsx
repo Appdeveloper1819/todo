@@ -41,6 +41,9 @@ const NoteInput = () => {
     reader.readAsDataURL(file);
   };
 
+  // console.log("hii", handleCross);
+  
+
 
   const handleCheck = (index) => {
     setIsChecked(index); 
@@ -138,7 +141,7 @@ const NoteInput = () => {
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Take a note..." 
-                className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none"/>
+                className="w-full bg-transparent outline-none text-gray-800 dark:text-white resize-none whitespace-pre-wrap break-words max-h-60 overflow-auto"/>
             )}
 
             {showChecklist && (
